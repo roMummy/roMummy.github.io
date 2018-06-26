@@ -199,7 +199,7 @@ gitalk:
   client_secret: 91cd56ec2ab784fc8436eec4ee72d7a7dde9e158
   repo: https://romummy.github.io/
   owner: roMummy
-  admin:
+  admin: roMummy
 ####   Using this js for redirect to gitalk container after login
 ####   See https://github.com/gitalk/gitalk/issues/125
 #   js: https://cdn.jsdelivr.net/gh/upupming/gitalk@36368e5dffd049e956cdbbd751ff96c28d8255cf/dist/gitalk.min.js
