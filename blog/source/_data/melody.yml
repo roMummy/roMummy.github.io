@@ -197,7 +197,7 @@ gitalk:
   enable: true
   client_id: 24af658de34aaa18ccee
   client_secret: 91cd56ec2ab784fc8436eec4ee72d7a7dde9e158
-  repo: 'https://romummy.github.io/'
+  repo: 'romummy.github.io'
   owner: roMummy
   admin: roMummy
 ####   Using this js for redirect to gitalk container after login
