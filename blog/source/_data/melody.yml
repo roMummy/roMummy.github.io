@@ -173,7 +173,7 @@ addThis:
 
 sharejs:
   enable: true
-  disabled_sites: qzone,qq,weibo,wechat,google,facebook,twitter 
+  sites: qzone,qq,weibo,wechat,google,facebook,twitter 
 
 # Comments System
 # ---------------
