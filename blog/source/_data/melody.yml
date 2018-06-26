@@ -115,7 +115,7 @@ cdn:
 # ---------------
 avatar: https://img2.tapimg.com/bbcode/images/a489573de36c0cbc70b9ee406d84ec57.jpg?imageView2/2/w/1320/q/80/format/jpg/interlace/1/ignore-error/1
 
-top_img: https://img2.tapimg.com/bbcode/images/c2bd8a8de7e9c11a0febd81b9e24d8ef.jpg # false or url of img 
+top_img: true # false or url of img 
 
 post_meta:
   date_type: created # created or updated 
@@ -177,8 +177,8 @@ addThis:
 
 # Comments System
 # ---------------
-# disqus:
-#   enable: true 
+disqus:
+  enable: false 
 #   shortname: disqus_fBWm0RrawQ
 #   count: true
 
@@ -193,12 +193,12 @@ addThis:
   # client_id: 
   # client_secret: 
 
-gitalk:
-  enable: true
-  client_id: 24af658de34aaa18ccee
-  client_secret: 91cd56ec2ab784fc8436eec4ee72d7a7dde9e158
-  repo: https://romummy.github.io/
-  owner: roMummy
+# gitalk:
+#   enable: true
+#   client_id: 24af658de34aaa18ccee
+#   client_secret: 91cd56ec2ab784fc8436eec4ee72d7a7dde9e158
+#   repo: https://romummy.github.io/
+#   owner: roMummy
 #   admin:
 ####   Using this js for redirect to gitalk container after login
 ####   See https://github.com/gitalk/gitalk/issues/125
