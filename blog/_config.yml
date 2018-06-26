@@ -79,5 +79,6 @@ theme: landscape
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-    repository: https://github.com/roMummy/roMummy.github.io.git
-    branch: master
+  repository: https://github.com/roMummy/roMummy.github.io.git
+  branch: master
+
