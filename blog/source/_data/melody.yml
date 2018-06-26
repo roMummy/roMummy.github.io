@@ -41,14 +41,14 @@ pwa:
 
 # Highlight theme
 # ---------------
-highlight_theme: default
+highlight_theme: light
 
-# code_word_wrap: true or false
+code_word_wrap: true
 
 # Nav settings
 # ---------------
-#social:
-  #icon_name: url
+social:
+  github: https://github.com/roMummy
 
 # Algolia search
 # ---------------
