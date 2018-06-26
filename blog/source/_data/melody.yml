@@ -14,9 +14,9 @@
 # ---------------
 menu:
   首页: /
-  Archives: /archives
-  Tags: /tags
-  Categories: /categories
+  档案: /archives
+  标签: /tags
+  类别: /categories
   #XXX: /xxx
 
 # Favicon
@@ -74,7 +74,7 @@ mathjax:
 
 # Toggle fireworks (IE >= 10)
 # ---------------
-fireworks: false
+fireworks: true
 
 # Analysis
 # ---------------
@@ -113,9 +113,9 @@ cdn:
 
 # Post info settings
 # ---------------
-avatar: 
+avatar: https://img2.tapimg.com/bbcode/images/a489573de36c0cbc70b9ee406d84ec57.jpg?imageView2/2/w/1320/q/80/format/jpg/interlace/1/ignore-error/1
 
-top_img: true # false or url of img 
+top_img: https://img2.tapimg.com/bbcode/images/c2bd8a8de7e9c11a0febd81b9e24d8ef.jpg # false or url of img 
 
 post_meta:
   date_type: created # created or updated 
@@ -136,9 +136,9 @@ post_copyright:
   license_url: https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 # Please see doc for more details: https://molunerfinn.com/hexo-theme-melody-doc/#/theme-config?id=auto-excerpt
-# auto_excerpt:
-#   enable: false
-#   length: 150
+auto_excerpt:
+  enable: true
+  length: 150
 
 # slide
 # For reveal.js config, see https://github.com/hakimel/reveal.js#configuration
@@ -177,10 +177,10 @@ addThis:
 
 # Comments System
 # ---------------
-disqus:
-  enable: false 
-  #shortname: 
-  #count: 
+# disqus:
+#   enable: true 
+#   shortname: disqus_fBWm0RrawQ
+#   count: true
 
 # laibili:
   # enable: false
@@ -193,12 +193,12 @@ disqus:
   # client_id: 
   # client_secret: 
 
-# gitalk:
-#   enable: false
-#   client_id: 
-#   client_secret: 
-#   repo:
-#   owner:
+gitalk:
+  enable: true
+  client_id: 24af658de34aaa18ccee
+  client_secret: 91cd56ec2ab784fc8436eec4ee72d7a7dde9e158
+  repo: https://romummy.github.io/
+  owner: roMummy
 #   admin:
 ####   Using this js for redirect to gitalk container after login
 ####   See https://github.com/gitalk/gitalk/issues/125
@@ -247,12 +247,12 @@ busuanzi:
 
 # Sidebar Settings
 # ---------------
-#links_title: Links
-#links:
-  #Name: url
+links_title: Links
+links:
+  me: https://github.com/roMummy
 
 # Follow Me Button
-# follow:
-#   enable: true
-#   url: ''
-#   text: ''
+follow:
+  enable: true
+  url: 'https://github.com/roMummy'
+  text: 'github'
