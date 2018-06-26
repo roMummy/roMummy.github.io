@@ -171,9 +171,9 @@ addThis:
   enable: false
   #pubid: 
 
-# sharejs:
-  # enable: false
-  # disabled_sites: 
+sharejs:
+  enable: true
+  disabled_sites: qzone,qq,weibo,wechat,google,facebook,twitter 
 
 # Comments System
 # ---------------
