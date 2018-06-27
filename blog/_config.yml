@@ -87,12 +87,8 @@ algolia:
   apiKey: e73679890fc28f269bba3d12052e5a59
   adminApiKey: 546c9ca91f065e019d1bb7453b87447a
   chunkSize: 5000
-  fields:
-    - content:strip:truncate,0,500
-    - excerpt:strip
-    - gallery
-    - permalink
-    - photos
-    - slug
-    - tags
-    - title
+  indexName: blog
+
+search:
+  path: search.xml
+  field: post
