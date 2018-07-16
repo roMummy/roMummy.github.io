@@ -98,3 +98,90 @@ github上的issues早就告诉了我们答案
 ### 启动redis
 
 > src/redis-server
+
+加载配置 配置文件在刚刚安装redis文件夹下 
+> src/redis-server ./redis.conf 
+
+停止redis
+
+> src/redis-cli shutdown
+
+启动redis客户端
+
+> src/redis-cli
+
+如果被卡住了就使用kill直接杀死
+> kill -9 进程号
+
+使用下面这个命令查找进程号
+> ps -ef|grep redis
+
+### 配置redis
+
+
+* 第一步：进入redis目录
+> cd redis-4.0.10/
+
+* 第二部：打开配置文件
+> vim redis.conf
+
+* 第三部：注释掉环内地址
+> #bind 127.0.0.1
+
+* 第四部：配置密码
+> requirepass "123456"
+
+* 第五步：保存退出
+> wq
+
+* 第六步：重启redis
+> ps -ef|grep redis(查找进程号)<br>
+> kill -9 xxxx(进程号)<br>
+> src/redis-server ./redis.conf(使用配置启动)
+
+OVER
+
+### 测试连接redis（springboot）
+
+配置信息：
+```
+# REDIS (RedisProperties)
+# Redis数据库索引（默认为0）
+spring.redis.database=0
+# Redis服务器地址
+spring.redis.host=localhost
+# Redis服务器连接端口
+spring.redis.port=6379
+# Redis服务器连接密码（默认为空）
+spring.redis.password=
+# 连接池最大连接数（使用负值表示没有限制）
+spring.redis.pool.max-active=8
+# 连接池最大阻塞等待时间（使用负值表示没有限制）
+spring.redis.pool.max-wait=-1
+# 连接池中的最大空闲连接
+spring.redis.pool.max-idle=8
+# 连接池中的最小空闲连接
+spring.redis.pool.min-idle=0
+# 连接超时时间（毫秒）
+spring.redis.timeout=0
+
+```
+
+编写测试类
+```
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class RedisApplicationTests {
+
+	@Autowired
+	private StringRedisTemplate stringRedisTemplate;
+
+	@Test
+	public void contextLoads() {
+		stringRedisTemplate.opsForValue().set("a","\n---------哈哈哈哈哈");
+		System.out.print(stringRedisTemplate.opsForValue().get("a"));
+	}
+
+}
+
+```
