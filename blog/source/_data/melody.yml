@@ -49,7 +49,7 @@ code_word_wrap: true
 # ---------------
 social:
   github: https://github.com/roMummy
-
+  rss: /atom.xml
 # Algolia search
 # ---------------
 algolia_search:
