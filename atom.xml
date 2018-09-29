@@ -40,6 +40,29 @@
   </entry>
   
   <entry>
+    <title>连接mysql</title>
+    <link href="http://romummy.github.io/2018/07/12/%E8%BF%9E%E6%8E%A5mysql/"/>
+    <id>http://romummy.github.io/2018/07/12/连接mysql/</id>
+    <published>2018-07-12T09:47:09.000Z</published>
+    <updated>2018-09-29T04:22:45.339Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;最近在学习springboot，刚刚学到了连接数据库这里。作为小白的我遇见一个奇怪的错误&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;### C
+      
+    
+    </summary>
+    
+      <category term="SpringBoot" scheme="http://romummy.github.io/categories/SpringBoot/"/>
+    
+    
+      <category term="随记" scheme="http://romummy.github.io/tags/%E9%9A%8F%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
     <title>安装hexo</title>
     <link href="http://romummy.github.io/2018/06/27/%E5%AE%89%E8%A3%85hexo/"/>
     <id>http://romummy.github.io/2018/06/27/安装hexo/</id>
