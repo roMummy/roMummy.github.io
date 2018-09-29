@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>roMummy</title>
+  
+  <subtitle>美好生活，从现在开始</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://romummy.github.io/"/>
+  <updated>2018-09-28T11:02:47.685Z</updated>
+  <id>http://romummy.github.io/</id>
+  
+  <author>
+    <name>roMummy</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>CentOS上安装redis</title>
+    <link href="http://romummy.github.io/2018/07/13/CentOS%E4%B8%8A%E5%AE%89%E8%A3%85redis/"/>
+    <id>http://romummy.github.io/2018/07/13/CentOS上安装redis/</id>
+    <published>2018-07-13T07:04:21.000Z</published>
+    <updated>2018-09-28T11:02:47.685Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;目的&quot;&gt;&lt;a href=&quot;#目的&quot; class=&quot;headerlink&quot; title=&quot;目的&quot;&gt;&lt;/a&gt;目的&lt;/h3&gt;&lt;p&gt;为了练习在springboot中使用redis数据库，本人比较懒 不想把redis数据库装在本地，正好有一个免费的服务器可以玩 。 于是在l
+      
+    
+    </summary>
+    
+      <category term="数据库" scheme="http://romummy.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    
+      <category term="Redis" scheme="http://romummy.github.io/tags/Redis/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>安装hexo</title>
+    <link href="http://romummy.github.io/2018/06/27/%E5%AE%89%E8%A3%85hexo/"/>
+    <id>http://romummy.github.io/2018/06/27/安装hexo/</id>
+    <published>2018-06-27T04:44:00.000Z</published>
+    <updated>2018-09-28T11:02:47.685Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;前&quot;&gt;&lt;a href=&quot;#前&quot; class=&quot;headerlink&quot; title=&quot;前&quot;&gt;&lt;/a&gt;前&lt;/h2&gt;&lt;p&gt;很久之前就想写博客，之前也通过github安装过hexo。不过之前安装的时候有些问题，到时在我换电脑之后博客就打不开了，只能重新安装。这次的hexo
+      
+    
+    </summary>
+    
+      <category term="新鲜事物" scheme="http://romummy.github.io/categories/%E6%96%B0%E9%B2%9C%E4%BA%8B%E7%89%A9/"/>
+    
+    
+      <category term="随记" scheme="http://romummy.github.io/tags/%E9%9A%8F%E8%AE%B0/"/>
+    
+  </entry>
+  
+</feed>
