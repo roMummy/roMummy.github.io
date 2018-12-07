@@ -81,7 +81,7 @@ mathjax:
 
 # Toggle fireworks (IE >= 10)
 # ---------------
-fireworks: true
+fireworks: false
 
 # Analysis
 # ---------------
