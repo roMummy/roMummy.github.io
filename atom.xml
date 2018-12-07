@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>roMummy</title>
   
-  <subtitle>美好生活，从现在开始</subtitle>
+  <subtitle>Hello World！</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://romummy.github.io/"/>
