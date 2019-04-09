@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://romummy.github.io/"/>
-  <updated>2019-04-09T07:29:11.826Z</updated>
+  <updated>2019-04-09T07:36:58.150Z</updated>
   <id>http://romummy.github.io/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title></title>
+    <title>APP启动优化</title>
     <link href="http://romummy.github.io/2019/04/09/APP%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/"/>
     <id>http://romummy.github.io/2019/04/09/APP启动优化/</id>
-    <published>2019-04-09T07:29:11.826Z</published>
-    <updated>2019-04-09T07:29:11.826Z</updated>
+    <published>2019-04-09T07:35:38.000Z</published>
+    <updated>2019-04-09T07:36:58.150Z</updated>
     
     <summary type="html">
     
@@ -33,6 +33,10 @@
     
     </summary>
     
+      <category term="iOS" scheme="http://romummy.github.io/categories/iOS/"/>
+    
+    
+      <category term="学习" scheme="http://romummy.github.io/tags/%E5%AD%A6%E4%B9%A0/"/>
     
   </entry>
   
