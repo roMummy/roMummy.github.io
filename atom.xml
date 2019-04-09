@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://romummy.github.io/"/>
-  <updated>2018-09-28T11:02:47.685Z</updated>
+  <updated>2019-04-09T07:29:11.826Z</updated>
   <id>http://romummy.github.io/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title></title>
+    <link href="http://romummy.github.io/2019/04/09/APP%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/"/>
+    <id>http://romummy.github.io/2019/04/09/APP启动优化/</id>
+    <published>2019-04-09T07:29:11.826Z</published>
+    <updated>2019-04-09T07:29:11.826Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;APP启动&quot;&gt;&lt;a href=&quot;#APP启动&quot; class=&quot;headerlink&quot; title=&quot;APP启动&quot;&gt;&lt;/a&gt;APP启动&lt;/h3&gt;&lt;blockquote&gt;
+&lt;p&gt;冷启动：App 点击启动前，它的进程不在系统里，需要系统新创建一个进程，需要系统新创建一个
+      
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>CentOS上安装redis</title>
