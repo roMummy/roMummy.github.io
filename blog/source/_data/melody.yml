@@ -122,7 +122,8 @@ cdn:
 # ---------------
 avatar: https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1530072864&di=b83735a6b8cfd2147078a2bbf06d7570&src=http://ww2.sinaimg.cn/wap720/63a4b031jw1f4lxxamw0jj218g0qodib.jpg
 
-top_img: https://img2.tapimg.com/bbcode/images/c2bd8a8de7e9c11a0febd81b9e24d8ef.jpg # false or url of img 
+top_img: 
+- /img/top.jpg # false or url of img 
 
 post_meta:
   date_type: created # created or updated 
