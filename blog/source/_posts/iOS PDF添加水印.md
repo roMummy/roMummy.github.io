@@ -27,7 +27,7 @@ categories: iOS
 
   PDFDocument有一个delegate，其中有一个代理方法```func classForPage() -> AnyClass```，这个方法可以让我们自己绘制PDFPage。绘制好PDF之后就可以使用PDFDocument提供的```write(toFile path: String) -> Bool```来导出。
 
-###具体实现
+### 具体实现
 
 * 绘制水印
 
@@ -63,7 +63,9 @@ categories: iOS
           
           print("page - \(label)")
           // 渲染文字
-          drawWatermark(config: config, contextWidth: pageBounds.width, contextHeight: pageBounds.height)
+          drawWatermark(config: config,
+                        contextWidth: pageBounds.width, 
+                        contextHeight: pageBounds.height)
           
           context.restoreGState()
           UIGraphicsPopContext()
@@ -107,7 +109,8 @@ categories: iOS
           // 导出的时候需要特殊处理旋转角度
           let angle = config.isExport ? (config.textAngle - rotation): config.textAngle
           context.rotate(by: CGFloat(angle)*(CGFloat.pi/180.0))
-          // 将绘制原点恢复初始值，保证当前context中心和源image的中心处在一个点(当前context已经旋转，所以绘制出的任何layer都是倾斜的)
+          // 将绘制原点恢复初始值，保证当前context中心和源image的中心处在一个点
+          // (当前context已经旋转，所以绘制出的任何layer都是倾斜的)
           context.translateBy(x: -contextWidth/2.0, y: -contextHeight/2.0)
           
           // layer 
@@ -128,7 +131,9 @@ categories: iOS
           
           for i in 0..<rowCount*columnCount {
               // 渲染文本
-              NSString(string: config.text).draw(in: CGRect(x: tempOrignX, y: tempOrignY, width: mStrW, height: mStrH), withAttributes: attributes)
+              NSString(string: config.text)
+            .draw(in: CGRect(x: tempOrignX, y: tempOrignY, width: mStrW, height: mStrH),
+                  withAttributes: attributes)
               // 换行
               if i % rowCount == 0 && i != 0 {
                   tempOrignX = orignX
@@ -257,11 +262,11 @@ import PDFKit
 import UIKit
 
 class ViewController: UIViewController {
-		private lazy var pdfView: PDFView = {
-      	let view = PDFView(frame: self.view.frame)
+        private lazy var pdfView: PDFView = {
+        let view = PDFView(frame: self.view.frame)
         view.autoScales = true
         view.isUserInteractionEnabled = true
-				view.backgroundColor = .main_bg_blue_color
+                view.backgroundColor = .main_bg_blue_color
 //        view.displayMode = .twoUp
         view.displayBox = .artBox
 //        view.usePageViewController(true, withViewOptions: nil)
@@ -285,6 +290,8 @@ class ViewController: UIViewController {
     }
 }
 ```
+
+
 
 ### 资料
 
