@@ -88,6 +88,8 @@ deploy:
   type: git
   repository: git@github.com:roMummy/roMummy.github.io.git
   branch: master
+  name: roMummy
+  email: tianwen520@outlook.com
   
 algolia:
   appId: 3UCLZP29QJ
