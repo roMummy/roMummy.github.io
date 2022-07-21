@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>roMummy</title>
+  
+  <subtitle>Hello World！</subtitle>
+  <link href="http://romummy.github.io/atom.xml" rel="self"/>
+  
+  <link href="http://romummy.github.io/"/>
+  <updated>2022-07-21T01:32:09.638Z</updated>
+  <id>http://romummy.github.io/</id>
+  
+  <author>
+    <name>roMummy</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>iOS PDF添加水印</title>
+    <link href="http://romummy.github.io/2022/07/20/iOS%20PDF%E6%B7%BB%E5%8A%A0%E6%B0%B4%E5%8D%B0/"/>
+    <id>http://romummy.github.io/2022/07/20/iOS%20PDF%E6%B7%BB%E5%8A%A0%E6%B0%B4%E5%8D%B0/</id>
+    <published>2022-07-20T03:22:37.000Z</published>
+    <updated>2022-07-21T01:32:09.638Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;iOS-PDF添加水印&quot;&gt;&lt;a href=&quot;#iOS-PDF添加水印&quot; class=&quot;headerlink&quot; title=&quot;iOS PDF添加水印&quot;&gt;&lt;/a&gt;iOS PDF添加水印&lt;/h2&gt;&lt;p&gt;最近在做PDF相关的项目，记录一下&lt;/p&gt;
+&lt;h3 id=&quot;实现功能</summary>
+      
+    
+    
+    
+    <category term="iOS" scheme="http://romummy.github.io/categories/iOS/"/>
+    
+    
+    <category term="学习" scheme="http://romummy.github.io/tags/%E5%AD%A6%E4%B9%A0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>APP启动优化</title>
+    <link href="http://romummy.github.io/2019/04/09/APP%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/"/>
+    <id>http://romummy.github.io/2019/04/09/APP%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/</id>
+    <published>2019-04-09T07:35:38.000Z</published>
+    <updated>2022-07-21T01:32:09.638Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;h3 id=&quot;APP启动&quot;&gt;&lt;a href=&quot;#APP启动&quot; class=&quot;headerlink&quot; title=&quot;APP启动&quot;&gt;&lt;/a&gt;APP启动&lt;/h3&gt;&lt;blockquote&gt;
+&lt;p&gt;冷启动：App 点击启动前，它的进程不在系统里，需要系统新创建一个进程，需要系统新创建一个</summary>
+      
+    
+    
+    
+    <category term="iOS" scheme="http://romummy.github.io/categories/iOS/"/>
+    
+    
+    <category term="学习" scheme="http://romummy.github.io/tags/%E5%AD%A6%E4%B9%A0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CentOS上安装redis</title>
+    <link href="http://romummy.github.io/2018/07/13/CentOS%E4%B8%8A%E5%AE%89%E8%A3%85redis/"/>
+    <id>http://romummy.github.io/2018/07/13/CentOS%E4%B8%8A%E5%AE%89%E8%A3%85redis/</id>
+    <published>2018-07-13T07:04:21.000Z</published>
+    <updated>2022-07-21T01:32:09.638Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;h3 id=&quot;目的&quot;&gt;&lt;a href=&quot;#目的&quot; class=&quot;headerlink&quot; title=&quot;目的&quot;&gt;&lt;/a&gt;目的&lt;/h3&gt;&lt;p&gt;为了练习在springboot中使用redis数据库，本人比较懒 不想把redis数据库装在本地，正好有一个免费的服务器可以玩 。 于是在l</summary>
+      
+    
+    
+    
+    <category term="数据库" scheme="http://romummy.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    
+    <category term="Redis" scheme="http://romummy.github.io/tags/Redis/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>连接mysql</title>
+    <link href="http://romummy.github.io/2018/07/12/%E8%BF%9E%E6%8E%A5mysql/"/>
+    <id>http://romummy.github.io/2018/07/12/%E8%BF%9E%E6%8E%A5mysql/</id>
+    <published>2018-07-12T09:47:09.000Z</published>
+    <updated>2022-07-21T01:32:09.638Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;最近在学习springboot，刚刚学到了连接数据库这里。作为小白的我遇见一个奇怪的错误&lt;/p&gt;
+&lt;figure class=&quot;highlight plaintext&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;</summary>
+      
+    
+    
+    
+    <category term="SpringBoot" scheme="http://romummy.github.io/categories/SpringBoot/"/>
+    
+    
+    <category term="随记" scheme="http://romummy.github.io/tags/%E9%9A%8F%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>安装hexo</title>
+    <link href="http://romummy.github.io/2018/06/27/%E5%AE%89%E8%A3%85hexo/"/>
+    <id>http://romummy.github.io/2018/06/27/%E5%AE%89%E8%A3%85hexo/</id>
+    <published>2018-06-27T04:44:00.000Z</published>
+    <updated>2022-07-21T01:32:09.638Z</updated>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;前&quot;&gt;&lt;a href=&quot;#前&quot; class=&quot;headerlink&quot; title=&quot;前&quot;&gt;&lt;/a&gt;前&lt;/h2&gt;&lt;p&gt;很久之前就想写博客，之前也通过github安装过hexo。不过之前安装的时候有些问题，到时在我换电脑之后博客就打不开了，只能重新安装。这次的hexo</summary>
+      
+    
+    
+    
+    <category term="新鲜事物" scheme="http://romummy.github.io/categories/%E6%96%B0%E9%B2%9C%E4%BA%8B%E7%89%A9/"/>
+    
+    
+    <category term="随记" scheme="http://romummy.github.io/tags/%E9%9A%8F%E8%AE%B0/"/>
+    
+  </entry>
+  
+</feed>

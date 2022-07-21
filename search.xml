@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>APP启动优化</title>
+    <url>/2019/04/09/APP%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/</url>
+    <content><![CDATA[<h3 id="APP启动"><a href="#APP启动" class="headerlink" title="APP启动"></a>APP启动</h3><blockquote>
+<p>冷启动：App 点击启动前，它的进程不在系统里，需要系统新创建一个进程，需要系统新创建一个进程分配给他。一次完整的启动过程；</p>
+<p>热启动：app在后台，进程还在系统中。</p>
+</blockquote>
+<hr>
+<h3 id="冷启动优化"><a href="#冷启动优化" class="headerlink" title="冷启动优化"></a>冷启动优化</h3><p>app启动3阶段：</p>
+<blockquote>
+<ol>
+<li>main()函数执行前；</li>
+<li>main()函数执行后；</li>
+<li>首屏渲染完成后。</li>
+</ol>
+</blockquote>
+<h4 id="main-函数执行前"><a href="#main-函数执行前" class="headerlink" title="main()函数执行前"></a>main()函数执行前</h4><p>系统操作：</p>
+<ul>
+<li><p>加载可执行文件（.0文件），动态连接器首先会检查共享缓存看看是否存在，如果存在，就直接从共享缓存中拿出来使用。每一个进程都把这个共享缓存映射到自己的地址空间中。</p>
+</li>
+<li><p>加载动态链接库，进行rebase指针调整和bind符号绑定</p>
+<blockquote>
+<p>动态度的加载过程：</p>
+<p>①分析所依赖的动态库<br>②找到动态库的mach-o文件<br>③打开文件<br>④验证文件<br>⑤在系统核心注册文件签名<br>⑥对动态库的每一个segment调用mmap()</p>
+</blockquote>
+</li>
+<li><p>Objc运行时初始处理（相关类注册、category注册、selector唯一性检查）</p>
+</li>
+<li><p>初始化，执行+load()方法、attribute修饰的函数的调用、创建c++静态全局变量</p>
+</li>
+</ul>
+<p>优化：</p>
+<ul>
+<li>减少动态库加载，尽量将多个动态库合并</li>
+<li>减少加载启动后不会去使用的类或者方法</li>
+<li>减少使用+load()方法，使用+initialize()方法替换。在一个 +load() 方法里，进行运行时方法替换操作会带来4毫秒的消耗</li>
+<li>控制c++全局变量的数量</li>
+</ul>
+<blockquote>
+<p>通过在工程的scheme中添加环境变量<code>DYLD_PRINT_STATISTICS</code>，设置值为1，App启动加载时Xcode的控制台就会有pre-main各个阶段的详细耗时输出。但是<code>DYLD_PRINT_STATISTICS</code>变量打印时间是iOS10以后才支持的功能，所以需要用iOS10系统及以上的机器来做测试。</p>
+</blockquote>
+<h4 id="mian-函数执行"><a href="#mian-函数执行" class="headerlink" title="mian()函数执行"></a>mian()函数执行</h4><p><img src="http://www.zoomfeng.com/images/2018/07/5.png" alt="img"></p>
+<h4 id="mian-函数执行后"><a href="#mian-函数执行后" class="headerlink" title="mian()函数执行后"></a>mian()函数执行后</h4><p>mian()函数执行–&gt;didFinishLaunchingWithOptions 方法里首屏渲染相关方法执行完成</p>
+<p>执行：</p>
+<blockquote>
+<ul>
+<li>首屏初始化所需配置文件的读写操作</li>
+<li>首屏数据读取</li>
+<li>首屏渲染的大量计算</li>
+</ul>
+</blockquote>
+<p>优化：</p>
+<blockquote>
+<p>didFinishLaunchingWithOptions方法里面制作必要的操作。其它的操作放到对应的功能去初始化</p>
+</blockquote>
+<h4 id="首屏渲染完成后"><a href="#首屏渲染完成后" class="headerlink" title="首屏渲染完成后"></a>首屏渲染完成后</h4><p>首屏渲染完成–&gt;didFinishLaunchingWithOptions方法结束</p>
+<p>执行：</p>
+<blockquote>
+<p>非首屏其它业务模块的初始化、监听的注册、配置文件的读取等</p>
+</blockquote>
+<h4 id="功能级别的启动优化"><a href="#功能级别的启动优化" class="headerlink" title="功能级别的启动优化"></a>功能级别的启动优化</h4><p><img src="https://static001.geekbang.org/resource/image/f3/19/f30f438d447e81132dd520e657427419.png" alt="img"></p>
+<h4 id="方法级别的启动优化"><a href="#方法级别的启动优化" class="headerlink" title="方法级别的启动优化"></a>方法级别的启动优化</h4><p>objc_msgSend ：在运行时根据对象和方法的selector去找到对应的函数指针，然后执行。能够控制所有的oc方法。</p>
+<p><a href="https://opensource.apple.com/source/objc4/objc4-723/runtime/Messengers.subproj/">源码</a></p>
+<blockquote>
+<p>objc_msgSend逻辑：先获取对象对应类的信息，再获取方法的缓存，根据方法的selector查找函数指针，经过异常错误处理后，最后跳到对应函数的实现。</p>
+</blockquote>
+<p>资料：</p>
+<blockquote>
+<p><a href="https://time.geekbang.org/column/article/85331?code=0eTznNzpAbVisw%252525252FesJ9iM32u2ctcY8OqwgMuqSlv5OE%252525253D">来源</a></p>
+<p><a href="http://www.zoomfeng.com/blog/launch-time.html">iOS启动时间优化</a></p>
+<p><a href="http://www.ruanyifeng.com/blog/2018/01/assembly-language-primer.html">汇编</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>iOS</category>
+      </categories>
+      <tags>
+        <tag>学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>CentOS上安装redis</title>
+    <url>/2018/07/13/CentOS%E4%B8%8A%E5%AE%89%E8%A3%85redis/</url>
+    <content><![CDATA[<h3 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h3><p>为了练习在springboot中使用redis数据库，本人比较懒 不想把redis数据库装在本地，正好有一个免费的服务器可以玩 。 于是在linux上安装redis，下面是安装redis遇到的坑。</p>
+<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><blockquote>
+<p>系统: CentOS Linux release 7.4.1708 (Core) </br><br>redis版本: redis-4.0.10 </br><br>redis官网: <a href="http://www.redis.cn/download.html">http://www.redis.cn/download.html</a></p>
+</blockquote>
+<p>第一步当然是按照官方的步骤一步一步来着。</p>
+<blockquote>
+<p>$ wget <a href="http://download.redis.io/releases/redis-4.0.10.tar.gz">http://download.redis.io/releases/redis-4.0.10.tar.gz</a> </br><br>$ tar xzf redis-4.0.10.tar.gz <br><br>$ cd redis-4.0.10 <br><br>$ make</p>
+</blockquote>
+<p>嗯嗯 一气呵成。没啥坑嘛 哈哈 想多了</p>
+<blockquote>
+<p>make[3]: gcc：命令未找到</p>
+</blockquote>
+<p>恩恩额 好吧 安装gcc</p>
+<blockquote>
+<p>yum -y install gcc automake autoconf libtool make</p>
+</blockquote>
+<p>…………………..<br><br>进过一段时间的等待 终于搞定gcc了！ 继续make</p>
+<blockquote>
+<p>zmalloc.h:50:31: 致命错误：jemalloc&#x2F;jemalloc.h：没有那个文件或目录<br> #include &lt;jemalloc&#x2F;jemalloc.h&gt;</p>
+</blockquote>
+<p> WTF？？<br> 马丹 这是什么👻 二话不说，百度<br> 解决方法：</p>
+<blockquote>
+<p>make MALLOC&#x3D;libc</p>
+</blockquote>
+<p> 这是啥？为啥要这么做？网上没找到答案 问了大佬才知道MALLOC&#x3D;libc是 </p>
+<ul>
+<li>编译并指定动态内存分配功能使用libc提供的</li>
+</ul>
+<p> 原来是内存分配的啊 为啥redis要用这个功能呢 来看看redis的原理：</p>
+<blockquote>
+<p>Redis本质上是一个Key-Value类型的内存数据库，很像memcached，整个数据库统统加载在内存当中进行操作，定期通过异步操作把数据库数据flush到硬盘上进行保存。因为是纯内存操作，Redis的性能非常出色，每秒可以处理超过 10万次读写操作，是已知性能最快的Key-Value DB。<br>Redis的出色之处不仅仅是性能，Redis最大的魅力是支持保存多种数据结构，此外单个value的最大限制是1GB，不像 memcached只能保存1MB的数据，因此Redis可以用来实现很多有用的功能，比方说用他的List来做FIFO双向链表，实现一个轻量级的高性 能消息队列服务，用他的Set可以做高性能的tag系统等等。另外Redis也可以对存入的Key-Value设置expire时间，因此也可以被当作一 个功能加强版的memcached来用。<br>Redis的主要缺点是数据库容量受到物理内存的限制，不能用作海量数据的高性能读写，因此Redis适合的场景主要局限在较小数据量的高性能操作和运算上</p>
+</blockquote>
+<p>恩恩额 原来redis经常和内存打交道啊 再来看看jemalloc干嘛用的：</p>
+<blockquote>
+<p>jemalloc是一个通用的malloc（3）实现，它强调了<br>碎片避免和可扩展的并发支持。jemalloc<br>于2005年首次作为FreeBSD libc分配器使用，从那以后它已经<br>进入许多依赖于其可预测行为的应用程序。2010年，<br>jemalloc开发工作范围扩大到包括开发人员支持功能<br>，如堆分析和广泛的监控&#x2F;调优钩子。现代jemalloc<br>版本继续被集成到FreeBSD中，因此多功能性<br>仍然至关重要。正在进行的开发工作趋势是将jemalloc<br>作为广泛的苛刻应用的最佳分配器之一，并且<br>消除&#x2F;减轻对现实<br>世界应用产生实际影响的弱点。</p>
+</blockquote>
+<p>个人理解的是</p>
+<blockquote>
+<p>redis主要是在内存上操作 而在内存上操作就不可避免的会产生内存碎片  为了优化内存碎片才选择的是jemalloc</p>
+</blockquote>
+<p>好 安装jemalloc</p>
+<h4 id="安装jemalloc"><a href="#安装jemalloc" class="headerlink" title="安装jemalloc"></a>安装jemalloc</h4><blockquote>
+<p>#下载 <br><br> wget <a href="https://github.com/jemalloc/jemalloc/releases/download/4.2.1/jemalloc-4.2.1.tar.bz2">https://github.com/jemalloc/jemalloc/releases/download/4.2.1/jemalloc-4.2.1.tar.bz2</a>  <br><br>#解压 <br><br>tar -xjvf jemalloc-4.2.1.tar.bz2 <br><br>#在jemalloc-4.2.1目录下预编译<br><br>.&#x2F;configure –prefix&#x3D;&#x2F;usr&#x2F;local&#x2F;jemalloc<br><br>#编译<br><br>make -j8 &amp;&amp; make install</p>
+</blockquote>
+<p>完成 但是不晓得为啥运行还是有那个错误 我是linux小白。。。</p>
+<hr>
+<h4 id="直接安装jemalloc依赖"><a href="#直接安装jemalloc依赖" class="headerlink" title="直接安装jemalloc依赖"></a>直接安装jemalloc依赖</h4><p>github上的issues早就告诉了我们答案</p>
+<ul>
+<li><a href="https://github.com/antirez/redis/issues/722">https://github.com/antirez/redis/issues/722</a></li>
+</ul>
+<p>在redis目录下进入 </p>
+<blockquote>
+<p>cd deps</p>
+</blockquote>
+<p>安装jemalloc依赖</p>
+<blockquote>
+<p>make hiredis lua jemalloc linenoise</p>
+</blockquote>
+<blockquote>
+<p>cd ..&#x2F;</p>
+</blockquote>
+<p>重新编译</p>
+<blockquote>
+<p>make</p>
+</blockquote>
+<p>成功</p>
+<h3 id="启动redis"><a href="#启动redis" class="headerlink" title="启动redis"></a>启动redis</h3><blockquote>
+<p>src&#x2F;redis-server</p>
+</blockquote>
+<p>加载配置 配置文件在刚刚安装redis文件夹下 </p>
+<blockquote>
+<p>src&#x2F;redis-server .&#x2F;redis.conf </p>
+</blockquote>
+<p>停止redis</p>
+<blockquote>
+<p>src&#x2F;redis-cli shutdown</p>
+</blockquote>
+<p>启动redis客户端</p>
+<blockquote>
+<p>src&#x2F;redis-cli</p>
+</blockquote>
+<p>如果被卡住了就使用kill直接杀死</p>
+<blockquote>
+<p>kill -9 进程号</p>
+</blockquote>
+<p>使用下面这个命令查找进程号</p>
+<blockquote>
+<p>ps -ef|grep redis</p>
+</blockquote>
+<h3 id="配置redis"><a href="#配置redis" class="headerlink" title="配置redis"></a>配置redis</h3><ul>
+<li><p>第一步：进入redis目录</p>
+<blockquote>
+<p>cd redis-4.0.10&#x2F;</p>
+</blockquote>
+</li>
+<li><p>第二部：打开配置文件</p>
+<blockquote>
+<p>vim redis.conf</p>
+</blockquote>
+</li>
+<li><p>第三部：注释掉环内地址</p>
+<blockquote>
+<p>#bind 127.0.0.1</p>
+</blockquote>
+</li>
+<li><p>第四部：配置密码</p>
+<blockquote>
+<p>requirepass “123456”</p>
+</blockquote>
+</li>
+<li><p>第五步：保存退出</p>
+<blockquote>
+<p>wq</p>
+</blockquote>
+</li>
+<li><p>第六步：重启redis</p>
+<blockquote>
+<p>ps -ef|grep redis(查找进程号)<br><br>kill -9 xxxx(进程号)<br><br>src&#x2F;redis-server .&#x2F;redis.conf(使用配置启动)</p>
+</blockquote>
+</li>
+</ul>
+<p>OVER</p>
+<h3 id="测试连接redis（springboot）"><a href="#测试连接redis（springboot）" class="headerlink" title="测试连接redis（springboot）"></a>测试连接redis（springboot）</h3><p>配置信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># REDIS (RedisProperties)</span><br><span class="line"># Redis数据库索引（默认为0）</span><br><span class="line">spring.redis.database=0</span><br><span class="line"># Redis服务器地址</span><br><span class="line">spring.redis.host=localhost</span><br><span class="line"># Redis服务器连接端口</span><br><span class="line">spring.redis.port=6379</span><br><span class="line"># Redis服务器连接密码（默认为空）</span><br><span class="line">spring.redis.password=</span><br><span class="line"># 连接池最大连接数（使用负值表示没有限制）</span><br><span class="line">spring.redis.pool.max-active=8</span><br><span class="line"># 连接池最大阻塞等待时间（使用负值表示没有限制）</span><br><span class="line">spring.redis.pool.max-wait=-1</span><br><span class="line"># 连接池中的最大空闲连接</span><br><span class="line">spring.redis.pool.max-idle=8</span><br><span class="line"># 连接池中的最小空闲连接</span><br><span class="line">spring.redis.pool.min-idle=0</span><br><span class="line"># 连接超时时间（毫秒）</span><br><span class="line">spring.redis.timeout=0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>编写测试类</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@RunWith(SpringRunner.class)</span><br><span class="line">@SpringBootTest</span><br><span class="line">public class RedisApplicationTests &#123;</span><br><span class="line"></span><br><span class="line">	@Autowired</span><br><span class="line">	private StringRedisTemplate stringRedisTemplate;</span><br><span class="line"></span><br><span class="line">	@Test</span><br><span class="line">	public void contextLoads() &#123;</span><br><span class="line">		stringRedisTemplate.opsForValue().set(&quot;a&quot;,&quot;\n---------哈哈哈哈哈&quot;);</span><br><span class="line">		System.out.print(stringRedisTemplate.opsForValue().get(&quot;a&quot;));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>Redis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>iOS PDF添加水印</title>
+    <url>/2022/07/20/iOS%20PDF%E6%B7%BB%E5%8A%A0%E6%B0%B4%E5%8D%B0/</url>
+    <content><![CDATA[<h2 id="iOS-PDF添加水印"><a href="#iOS-PDF添加水印" class="headerlink" title="iOS PDF添加水印"></a>iOS PDF添加水印</h2><p>最近在做PDF相关的项目，记录一下</p>
+<h3 id="实现功能"><a href="#实现功能" class="headerlink" title="实现功能"></a>实现功能</h3><ul>
+<li>支持添加文字水印</li>
+<li>支持旋转</li>
+<li>支持导出</li>
+<li>支持透明度</li>
+<li>支持图层</li>
+<li>支持平铺</li>
+<li>支持添加页面范围</li>
+<li>支持字体样式设置</li>
+<li>支持实时变更</li>
+</ul>
+<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><ul>
+<li><p>通过使用苹果自带的PDFKit来实现。</p>
+<p>PDFDocument有一个delegate，其中有一个代理方法<code>func classForPage() -&gt; AnyClass</code>，这个方法可以让我们自己绘制PDFPage。绘制好PDF之后就可以使用PDFDocument提供的<code>write(toFile path: String) -&gt; Bool</code>来导出。</p>
+</li>
+</ul>
+<p>###具体实现</p>
+<ul>
+<li><p>绘制水印</p>
+<p>创建一个全新的PDFPage</p>
+<p>然后重写<code>func draw(with box: PDFDisplayBox, to context: CGContext)</code>方法</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">PDFWatermarkPage</span>: <span class="title class_">PDFPage</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> pageIndex: <span class="type">Int</span>? &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> label <span class="operator">=</span> label &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="type">Int</span>(label)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">draw</span>(<span class="params">with</span> <span class="params">box</span>: <span class="type">PDFDisplayBox</span>, <span class="params">to</span> <span class="params">context</span>: <span class="type">CGContext</span>) &#123;</span><br><span class="line">        <span class="keyword">super</span>.draw(with: box, to: context)</span><br><span class="line">        <span class="keyword">let</span> config <span class="operator">=</span> <span class="type">PDFWatermarkTool</span>.<span class="type">PageConfiguration</span>.shared.configuration</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> pageIndex <span class="operator">=</span> pageIndex <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> pageIndex <span class="operator">&lt;</span> config.startPageIndex &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> pageIndex <span class="operator">&gt;</span> config.endPageIndex &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="type">UIGraphicsPushContext</span>(context)</span><br><span class="line">        context.saveGState()</span><br><span class="line">        <span class="keyword">let</span> pageBounds <span class="operator">=</span> bounds(for: box)</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;page - <span class="subst">\(label)</span>&quot;</span>)</span><br><span class="line">        <span class="comment">// 渲染文字</span></span><br><span class="line">        drawWatermark(config: config, contextWidth: pageBounds.width, contextHeight: pageBounds.height)</span><br><span class="line">        </span><br><span class="line">        context.restoreGState()</span><br><span class="line">        <span class="type">UIGraphicsPopContext</span>()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/// 计算整个页面可以绘制多少个文本 然后循环绘制文本</span></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">drawWatermark</span>(<span class="params">config</span>: <span class="type">PDFWatermarkTool</span>.<span class="type">Configuration</span>,</span><br><span class="line">                       <span class="params">contextWidth</span>: <span class="type">CGFloat</span>,</span><br><span class="line">                       <span class="params">contextHeight</span>: <span class="type">CGFloat</span>) &#123;</span><br><span class="line">        <span class="keyword">guard</span> config.text.count <span class="operator">&gt;</span> <span class="number">0</span> <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 斜线长</span></span><br><span class="line">        <span class="keyword">let</span> sqrtLength <span class="operator">=</span> sqrt(contextWidth <span class="operator">*</span> contextWidth <span class="operator">+</span> contextHeight <span class="operator">*</span> contextHeight)</span><br><span class="line">        <span class="comment">// 绘制文字的属性</span></span><br><span class="line">        <span class="keyword">let</span> attributes <span class="operator">=</span> [</span><br><span class="line">            <span class="type">NSAttributedString</span>.<span class="type">Key</span>.foregroundColor: config.textColor.withAlphaComponent(config.textAlpha),</span><br><span class="line">            <span class="type">NSAttributedString</span>.<span class="type">Key</span>.font: config.textFont,</span><br><span class="line">        ]</span><br><span class="line">        <span class="keyword">let</span> mAttributesStr <span class="operator">=</span> <span class="type">NSMutableAttributedString</span>(string: config.text, attributes: attributes)</span><br><span class="line">        <span class="comment">// 绘制文字的宽高</span></span><br><span class="line">        <span class="keyword">let</span> mStrW <span class="operator">=</span> mAttributesStr.size().width</span><br><span class="line">        <span class="keyword">let</span> mStrH <span class="operator">=</span> mAttributesStr.size().height</span><br><span class="line">        <span class="comment">// 文字间距</span></span><br><span class="line">        <span class="keyword">let</span> verticalSpace: <span class="type">CGFloat</span> <span class="operator">=</span> config.textVerticalSpace</span><br><span class="line">        <span class="keyword">let</span> horizontalSpace: <span class="type">CGFloat</span> <span class="operator">=</span> config.textHorizontalSpace</span><br><span class="line">                </span><br><span class="line">        <span class="comment">// 获取上下文</span></span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> context <span class="operator">=</span> <span class="type">UIGraphicsGetCurrentContext</span>() <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 保存上下文，压栈</span></span><br><span class="line">        context.saveGState()</span><br><span class="line">        <span class="comment">// 翻转坐标系，圆点从左下角变化到左上角</span></span><br><span class="line">        context.translateBy(x: <span class="number">0</span>, y: contextHeight)</span><br><span class="line">        context.scaleBy(x: <span class="number">1.0</span>, y: <span class="operator">-</span><span class="number">1.0</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 移动绘制圆点到画布中心</span></span><br><span class="line">        context.translateBy(x: contextWidth<span class="operator">/</span><span class="number">2.0</span>, y: contextHeight<span class="operator">/</span><span class="number">2.0</span>)</span><br><span class="line">        <span class="comment">// 旋转</span></span><br><span class="line">        <span class="comment">// 导出的时候需要特殊处理旋转角度</span></span><br><span class="line">        <span class="keyword">let</span> angle <span class="operator">=</span> config.isExport <span class="operator">?</span> (config.textAngle <span class="operator">-</span> rotation): config.textAngle</span><br><span class="line">        context.rotate(by: <span class="type">CGFloat</span>(angle)<span class="operator">*</span>(<span class="type">CGFloat</span>.pi<span class="operator">/</span><span class="number">180.0</span>))</span><br><span class="line">        <span class="comment">// 将绘制原点恢复初始值，保证当前context中心和源image的中心处在一个点(当前context已经旋转，所以绘制出的任何layer都是倾斜的)</span></span><br><span class="line">        context.translateBy(x: <span class="operator">-</span>contextWidth<span class="operator">/</span><span class="number">2.0</span>, y: <span class="operator">-</span>contextHeight<span class="operator">/</span><span class="number">2.0</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// layer </span></span><br><span class="line">        <span class="keyword">if</span> config.layer <span class="operator">==</span> .bottom &#123;</span><br><span class="line">          	<span class="comment">// 正片叠底 详见：https://www.jianshu.com/p/7c92c57cdf6f</span></span><br><span class="line">            context.setBlendMode(.multiply)</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 计算绘制的行和列</span></span><br><span class="line">        <span class="keyword">let</span> rowCount <span class="operator">=</span> <span class="type">Int</span>(sqrtLength <span class="operator">/</span> (mStrW <span class="operator">+</span> horizontalSpace)) <span class="operator">+</span> <span class="number">1</span></span><br><span class="line">        <span class="keyword">let</span> columnCount <span class="operator">=</span> <span class="type">Int</span>(sqrtLength <span class="operator">/</span> (mStrH <span class="operator">+</span> verticalSpace)) <span class="operator">+</span> <span class="number">1</span></span><br><span class="line">        <span class="comment">// 此处计算出需要绘制水印文字的起始点，由于水印区域要大于图片区域所以起点在原有基础上移</span></span><br><span class="line">        <span class="keyword">let</span> orignX <span class="operator">=</span> <span class="operator">-</span>(sqrtLength <span class="operator">-</span> contextWidth) <span class="operator">/</span> <span class="number">2.0</span></span><br><span class="line">        <span class="keyword">let</span> orignY <span class="operator">=</span> <span class="operator">-</span>(sqrtLength <span class="operator">-</span> contextHeight) <span class="operator">/</span> <span class="number">2.0</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">var</span> tempOrignX <span class="operator">=</span> orignX</span><br><span class="line">        <span class="keyword">var</span> tempOrignY <span class="operator">=</span> orignY</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span><span class="operator">..&lt;</span>rowCount<span class="operator">*</span>columnCount &#123;</span><br><span class="line">            <span class="comment">// 渲染文本</span></span><br><span class="line">            <span class="type">NSString</span>(string: config.text).draw(in: <span class="type">CGRect</span>(x: tempOrignX, y: tempOrignY, width: mStrW, height: mStrH), withAttributes: attributes)</span><br><span class="line">            <span class="comment">// 换行</span></span><br><span class="line">            <span class="keyword">if</span> i <span class="operator">%</span> rowCount <span class="operator">==</span> <span class="number">0</span> <span class="operator">&amp;&amp;</span> i <span class="operator">!=</span> <span class="number">0</span> &#123;</span><br><span class="line">                tempOrignX <span class="operator">=</span> orignX</span><br><span class="line">                tempOrignY <span class="operator">+=</span> (mStrH <span class="operator">+</span> verticalSpace)</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                tempOrignX <span class="operator">+=</span> (mStrW <span class="operator">+</span> horizontalSpace)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        context.restoreGState()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>特别需要注意的地方有2个点：</p>
+<ul>
+<li>CGContext的坐标系(原点在左下角)和UIKit的坐标系(原点在左上角))不一样，需要转换坐标系。</li>
+<li>导出的时候CGContext的坐标系也不一样(原点在右下角)，需要特殊处理<code>config.textAngle - rotation</code>水印旋转角度减去页面自身的旋转角度</li>
+</ul>
+</blockquote>
+</li>
+<li><p>导出水印</p>
+<figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"><span class="keyword">import</span> PDFKit</span><br><span class="line"></span><br><span class="line"><span class="comment">/// PDF页码管理</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">PDFWatermarkTool</span>: <span class="title class_">NSObject</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> configuration: <span class="type">Configuration</span> &#123;</span><br><span class="line">        <span class="keyword">didSet</span> &#123;</span><br><span class="line">            <span class="type">PageConfiguration</span>.shared.configuration <span class="operator">=</span> configuration</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">let</span> pdfDocument: <span class="type">PDFDocument</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">init</span>(<span class="params">pdfPath</span>: <span class="type">String</span>, <span class="params">configuration</span>: <span class="type">Configuration</span> <span class="operator">=</span> <span class="type">Configuration</span>()) &#123;</span><br><span class="line">        <span class="keyword">guard</span> <span class="keyword">let</span> document <span class="operator">=</span> <span class="type">PDFDocument</span>(url: <span class="type">URL</span>(fileURLWithPath: pdfPath)) <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">fatalError</span>(<span class="string">&quot;请传入有效的PDF路径&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">self</span>.configuration <span class="operator">=</span> configuration</span><br><span class="line">        <span class="type">PageConfiguration</span>.shared.configuration <span class="operator">=</span> configuration</span><br><span class="line">        pdfDocument <span class="operator">=</span> document</span><br><span class="line">        <span class="keyword">super</span>.<span class="keyword">init</span>()</span><br><span class="line">        pdfDocument.delegate <span class="operator">=</span> <span class="keyword">self</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">exportFile</span>(<span class="params">complate</span>: <span class="keyword">@escaping</span> (<span class="keyword">_</span> outputPath: <span class="type">String</span>?) -&gt; <span class="type">Void</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> newConfiguration <span class="operator">=</span> configuration</span><br><span class="line">        newConfiguration.isExport <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">        configuration <span class="operator">=</span> newConfiguration</span><br><span class="line">        </span><br><span class="line">        <span class="type">DispatchQueue</span>.global(qos: .background).async &#123;[<span class="keyword">weak</span> <span class="keyword">self</span>] <span class="keyword">in</span></span><br><span class="line">            <span class="keyword">guard</span> <span class="keyword">let</span> `self` <span class="operator">=</span> <span class="keyword">self</span> <span class="keyword">else</span> &#123;<span class="keyword">return</span>&#125;</span><br><span class="line">            <span class="keyword">var</span> path: <span class="type">String</span>?</span><br><span class="line">            path <span class="operator">=</span> <span class="type">NSTemporaryDirectory</span>() <span class="operator">+</span> <span class="string">&quot;test.pdf&quot;</span></span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">self</span>.pdfDocument.write(toFile: path<span class="operator">!</span>) &#123;</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;导出文件成功 - <span class="subst">\(path<span class="operator">!</span>)</span>&quot;</span>)</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="type">DispatchQueue</span>.main.async &#123;</span><br><span class="line">                complate(path)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">extension</span> <span class="title class_">PDFWatermarkTool</span>: <span class="title class_">PDFDocumentDelegate</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">classForPage</span>() -&gt; <span class="type">AnyClass</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">FZPDFWatermarkPage</span>.<span class="keyword">self</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">extension</span> <span class="title class_">PDFWatermarkTool</span> &#123;</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">PageConfiguration</span> &#123;</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">let</span> shared <span class="operator">=</span> <span class="type">PageConfiguration</span>()</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">init</span>() &#123;&#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">var</span> configuration: <span class="type">FZPDFWatermarkTool</span>.<span class="type">Configuration</span> <span class="operator">=</span> <span class="type">FZPDFWatermarkTool</span>.<span class="type">Configuration</span>()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">extension</span> <span class="title class_">PDFWatermarkTool</span> &#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">Configuration</span> &#123;</span><br><span class="line">        <span class="comment">/// 水印文字</span></span><br><span class="line">        <span class="keyword">var</span> text: <span class="type">String</span> <span class="operator">=</span> <span class="string">&quot;维权必究&quot;</span></span><br><span class="line">        <span class="comment">/// 文本颜色</span></span><br><span class="line">        <span class="keyword">var</span> textColor: <span class="type">UIColor</span> <span class="operator">=</span> .red</span><br><span class="line">        <span class="comment">/// 文本字体</span></span><br><span class="line">        <span class="keyword">var</span> textFont: <span class="type">UIFont</span> <span class="operator">=</span> .systemFont(ofSize: <span class="number">16</span>)</span><br><span class="line">        <span class="comment">/// 文字垂直方向间距</span></span><br><span class="line">        <span class="keyword">var</span> textVerticalSpace: <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">50.0</span></span><br><span class="line">        <span class="comment">/// 文字水平方向间距</span></span><br><span class="line">        <span class="keyword">var</span> textHorizontalSpace: <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">50.0</span></span><br><span class="line">        <span class="comment">/// 透明度</span></span><br><span class="line">        <span class="keyword">var</span> textAlpha: <span class="type">CGFloat</span> <span class="operator">=</span> <span class="number">1.0</span></span><br><span class="line">        <span class="comment">/// 倾斜角度</span></span><br><span class="line">        <span class="keyword">var</span> textAngle: <span class="type">Int</span> <span class="operator">=</span> <span class="number">45</span></span><br><span class="line">        <span class="comment">/// 图层 顶部和底部</span></span><br><span class="line">        <span class="keyword">var</span> layer: <span class="type">Layer</span> <span class="operator">=</span> .bottom</span><br><span class="line">        </span><br><span class="line">        <span class="comment">/// 开始页面位置</span></span><br><span class="line">        <span class="keyword">var</span> startPageIndex: <span class="type">Int</span> <span class="operator">=</span> <span class="number">1</span></span><br><span class="line">        <span class="comment">/// 结束页面位置</span></span><br><span class="line">        <span class="keyword">var</span> endPageIndex: <span class="type">Int</span> <span class="operator">=</span> .max</span><br><span class="line">        <span class="comment">/// 是否是导出</span></span><br><span class="line">        <span class="keyword">var</span> isExport: <span class="type">Bool</span> <span class="operator">=</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">Vertical</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> top</span><br><span class="line">        <span class="keyword">case</span> bottom</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">Horizontal</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> left</span><br><span class="line">        <span class="keyword">case</span> right</span><br><span class="line">        <span class="keyword">case</span> center</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">enum</span> <span class="title class_">Layer</span>:<span class="title class_">Codable</span>, <span class="title class_">CaseIterable</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> top</span><br><span class="line">        <span class="keyword">case</span> bottom</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>TODO: 这里导出的时候会走PDFPage的<code>func draw(with box: PDFDisplayBox, to context: CGContext)</code>方法，并且是一页一页的去渲染，最后再写入到文件里面，理论上可以获取导出进度的。</p>
+</li>
+</ul>
+<h3 id="页面展示"><a href="#页面展示" class="headerlink" title="页面展示"></a>页面展示</h3><figure class="highlight swift"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> PDFKit</span><br><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ViewController</span>: <span class="title class_">UIViewController</span> &#123;</span><br><span class="line">		<span class="keyword">private</span> <span class="keyword">lazy</span> <span class="keyword">var</span> pdfView: <span class="type">PDFView</span> <span class="operator">=</span> &#123;</span><br><span class="line">      	<span class="keyword">let</span> view <span class="operator">=</span> <span class="type">PDFView</span>(frame: <span class="keyword">self</span>.view.frame)</span><br><span class="line">        view.autoScales <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">        view.isUserInteractionEnabled <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">				view.backgroundColor <span class="operator">=</span> .main_bg_blue_color</span><br><span class="line"><span class="comment">//        view.displayMode = .twoUp</span></span><br><span class="line">        view.displayBox <span class="operator">=</span> .artBox</span><br><span class="line"><span class="comment">//        view.usePageViewController(true, withViewOptions: nil)</span></span><br><span class="line">        view.displayDirection <span class="operator">=</span> .vertical</span><br><span class="line">        view.autoScales <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">    &#125;()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">lazy</span> <span class="keyword">var</span> pdfWatermark: <span class="type">FZPDFWatermarkTool</span> <span class="operator">=</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> pdfUrl <span class="operator">=</span> <span class="type">Bundle</span>.main.url(forResource: <span class="string">&quot;ASample&quot;</span>, withExtension: <span class="string">&quot;pdf&quot;</span>)</span><br><span class="line">        <span class="keyword">let</span> config <span class="operator">=</span> <span class="type">PDFWatermarkTool</span>.<span class="type">Configuration</span>()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> pdfWatermark <span class="operator">=</span> <span class="type">PDFWatermarkTool</span>(pdfPath: (pdfUrl<span class="operator">?</span>.path)<span class="operator">!</span>, configuration: config)</span><br><span class="line">        <span class="keyword">return</span> pdfWatermark</span><br><span class="line">    &#125;()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">viewDidLoad</span>() &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line">        pdfView.document <span class="operator">=</span> pdfWatermark.pdfDocument</span><br><span class="line"></span><br><span class="line">        view.addSubview(pdfView)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="资料"><a href="#资料" class="headerlink" title="资料"></a>资料</h3><p>官方添加水印资料: <a href="https://developer.apple.com/documentation/pdfkit/custom_graphics">https://developer.apple.com/documentation/pdfkit/custom_graphics</a></p>
+<p>PDFKit苹果官方资料：<a href="https://developer.apple.com/documentation/pdfkit">https://developer.apple.com/documentation/pdfkit</a></p>
+<p>Quartz 2D：<a href="https://developer.apple.com/documentation/coregraphics">https://developer.apple.com/documentation/coregraphics</a></p>
+]]></content>
+      <categories>
+        <category>iOS</category>
+      </categories>
+      <tags>
+        <tag>学习</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>安装hexo</title>
+    <url>/2018/06/27/%E5%AE%89%E8%A3%85hexo/</url>
+    <content><![CDATA[<h2 id="前"><a href="#前" class="headerlink" title="前"></a>前</h2><p>很久之前就想写博客，之前也通过github安装过hexo。不过之前安装的时候有些问题，到时在我换电脑之后博客就打不开了，只能重新安装。这次的hexo之旅解决了之前hexo换电脑后的尴尬。在写这篇博客之前很感谢<a href="https://www.zhihu.com/question/21193762/answer/79109280">知乎大神</a>提供的方案。</p>
+<hr>
+<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><h3 id="博客搭建"><a href="#博客搭建" class="headerlink" title="博客搭建"></a>博客搭建</h3><blockquote>
+<p>主要的设计思路就是，在github的仓库上创建两个分支</p>
+<ul>
+<li>blog 用来存放hexo的静态网页（相当于后台）</li>
+<li>master 用来存放hexo编译生成的网站文件（相当于前端）</li>
+</ul>
+</blockquote>
+<ul>
+<li>在github上创建仓库，取名为 xxx.github.io(xxx为你的github名称);</li>
+<li>通过sourceTree把github上的仓库clone到本地；</li>
+<li>创建一个分支blog，默认有一个master</li>
+<li>在本地仓库地址的根目录创建一个空目录，取名hexo（这个就是以后博客的根目录）</li>
+<li>通过终端cd到刚刚创建的目录下，依次执行  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//安装hexo</span><br><span class="line">npm install hexo</span><br><span class="line">//初始化hexo</span><br><span class="line">hexo init</span><br><span class="line">//安装与github的桥接文件</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure></li>
+<li>修改_config.yml中的deploy参数，例如：  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">    type: git</span><br><span class="line">    repository: https://github.com/xxx/xxx.github.io.git #记得把xxx替换成你的github名字</span><br><span class="line">    branch: master</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这样就表示你通过 hexo g -d 部署生成的文件会直自动同步到你的master分支上去</p>
+</blockquote>
+</li>
+<li>在blog分支下把改动的内容推送到github上去</li>
+<li>执行 hexo g -d 生成网站并且部署到github上  </li>
+<li>over</li>
+</ul>
+<h3 id="日常操作"><a href="#日常操作" class="headerlink" title="日常操作"></a>日常操作</h3><ul>
+<li>在本地修改之后，推送到github上</li>
+<li>在终端执行 hexo g -d 重新部署 到master分支上</li>
+</ul>
+<h3 id="更换电脑"><a href="#更换电脑" class="headerlink" title="更换电脑"></a>更换电脑</h3><ul>
+<li>从github上clone下blog分支</li>
+<li>在本地hexo（博客根文件夹）文件夹下通过终端依次执行：  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//安装hexo</span><br><span class="line">npm install hexo</span><br><span class="line">//安装与github的桥接文件</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：不需要hexo init </p>
+<p>如果你安装了主题，那么你需要重新在博客根文件夹下安装主题。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>到目前为止，你已经搭建了一个完美的可以移植的hexo博客了，当然页面很丑。</p>
+<blockquote>
+<p>可以通过<a href="https://hexo.io/themes/">hexo主题</a>来选择一个漂亮的主题（当然主题配置也会有很多坑）</p>
+</blockquote>
+<blockquote>
+<p>推荐主题：</p>
+</blockquote>
+<ul>
+<li><a href="https://github.com/theme-next/hexo-theme-next">NexT是exo优雅而强大的主题</a></li>
+<li><a href="https://github.com/Molunerfinn/hexo-theme-melody">exo的一个简单＆美丽＆快速的主题</a>(我目前使用的主题)</li>
+</ul>
+<p>只是我在搭建好个人博客之后写的第一篇博客，有很多地方写得不优雅，希望大家多海涵。</p>
+<p>在以后的日子里我会经常更新博客的。</p>
+<blockquote>
+<p>千里之行始于足下</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>新鲜事物</category>
+      </categories>
+      <tags>
+        <tag>随记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>连接mysql</title>
+    <url>/2018/07/12/%E8%BF%9E%E6%8E%A5mysql/</url>
+    <content><![CDATA[<p>最近在学习springboot，刚刚学到了连接数据库这里。作为小白的我遇见一个奇怪的错误</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">### Cause: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection; nested exception is com.mysql.jdbc.exceptions.jdbc4.CommunicationsException: Communications link failure</span><br></pre></td></tr></table></figure>
+<p>配置信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">spring.datasource.url=jdbc:mysql://localhost:3306/test1?useSSL=true</span><br><span class="line">spring.datasource.username=root</span><br><span class="line">spring.datasource.password=123456</span><br><span class="line">spring.datasource.driver-class-name=com.mysql.jdbc.Driver</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>原来是开启了ssl加密连接方式。但是又没有配置ssl加密，所以导致不能连接上数据库。<br>mysql高版本都推荐使用ssl的方式连接数据库。<br><a href="https://dev.mysql.com/doc/refman/5.7/en/using-encrypted-connections.html#using-encrypted-connections-server-side-configuration">配置方法</a></p>
+</blockquote>
+<blockquote>
+<p>不过不需要使用ssl这种连接方式的话可以使用useSSL&#x3D;false避免这个错误 ，或者使用verifyServerCertificate&#x3D;false不使用证书配置</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">spring.datasource.url=jdbc:mysql://localhost:3306/test1?useSSL=true&amp;verifyServerCertificate=false</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>SpringBoot</category>
+      </categories>
+      <tags>
+        <tag>随记</tag>
+      </tags>
+  </entry>
+</search>

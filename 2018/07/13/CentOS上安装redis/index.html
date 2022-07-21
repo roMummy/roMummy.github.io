@@ -1,0 +1,153 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="CentOS上安装redis"><meta name="keywords" content="Redis"><meta name="author" content="roMummy"><meta name="copyright" content="roMummy"><title>CentOS上安装redis | roMummy</title><link rel="shortcut icon" href="/favicon.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css?version=1.9.1"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容:${query}"}},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  hexoVersion: '5.4.2'
+} </script><meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="roMummy" type="application/atom+xml">
+</head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="切换文章详情">切换站点概览</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%AE%E7%9A%84"><span class="toc-number">1.</span> <span class="toc-text">目的</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B"><span class="toc-number"></span> <span class="toc-text">开始</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85jemalloc"><span class="toc-number">0.1.</span> <span class="toc-text">安装jemalloc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5%E5%AE%89%E8%A3%85jemalloc%E4%BE%9D%E8%B5%96"><span class="toc-number">0.2.</span> <span class="toc-text">直接安装jemalloc依赖</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8redis"><span class="toc-number">1.</span> <span class="toc-text">启动redis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEredis"><span class="toc-number">2.</span> <span class="toc-text">配置redis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E8%BF%9E%E6%8E%A5redis%EF%BC%88springboot%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">测试连接redis（springboot）</span></a></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&amp;quality=100&amp;size=b4000_4000&amp;sec=1530072864&amp;di=b83735a6b8cfd2147078a2bbf06d7570&amp;src=http://ww2.sinaimg.cn/wap720/63a4b031jw1f4lxxamw0jj218g0qodib.jpg"></div><div class="author-info__name text-center">roMummy</div><div class="author-info__description text-center"></div><div class="follow-button"><a target="_blank" rel="noopener" href="https://github.com/roMummy">github</a></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">文章</span><span class="pull-right">5</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">标签</span><span class="pull-right">3</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">分类</span><span class="pull-right">4</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://github.com/roMummy">me</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(/img/top.jpg)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">roMummy</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">首页</a><a class="site-page" href="/archives">档案</a><a class="site-page" href="/tags">标签</a><a class="site-page" href="/categories">类别</a></span><span class="pull-right"><a class="site-page social-icon search"><i class="fa fa-search"></i><span> 搜索</span></a></span></div><div id="post-info"><div id="post-title">CentOS上安装redis</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2018-07-13</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><div class="post-meta-wordcount"><span>字数总计: </span><span class="word-count">1.4k</span><span class="post-meta__separator">|</span><span>阅读时长: 5 分钟</span></div></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><h3 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h3><p>为了练习在springboot中使用redis数据库，本人比较懒 不想把redis数据库装在本地，正好有一个免费的服务器可以玩 。 于是在linux上安装redis，下面是安装redis遇到的坑。</p>
+<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><blockquote>
+<p>系统: CentOS Linux release 7.4.1708 (Core) </br><br>redis版本: redis-4.0.10 </br><br>redis官网: <a target="_blank" rel="noopener" href="http://www.redis.cn/download.html">http://www.redis.cn/download.html</a></p>
+</blockquote>
+<p>第一步当然是按照官方的步骤一步一步来着。</p>
+<blockquote>
+<p>$ wget <a target="_blank" rel="noopener" href="http://download.redis.io/releases/redis-4.0.10.tar.gz">http://download.redis.io/releases/redis-4.0.10.tar.gz</a> </br><br>$ tar xzf redis-4.0.10.tar.gz <br><br>$ cd redis-4.0.10 <br><br>$ make</p>
+</blockquote>
+<p>嗯嗯 一气呵成。没啥坑嘛 哈哈 想多了</p>
+<blockquote>
+<p>make[3]: gcc：命令未找到</p>
+</blockquote>
+<p>恩恩额 好吧 安装gcc</p>
+<blockquote>
+<p>yum -y install gcc automake autoconf libtool make</p>
+</blockquote>
+<p>…………………..<br><br>进过一段时间的等待 终于搞定gcc了！ 继续make</p>
+<blockquote>
+<p>zmalloc.h:50:31: 致命错误：jemalloc&#x2F;jemalloc.h：没有那个文件或目录<br> #include &lt;jemalloc&#x2F;jemalloc.h&gt;</p>
+</blockquote>
+<p> WTF？？<br> 马丹 这是什么👻 二话不说，百度<br> 解决方法：</p>
+<blockquote>
+<p>make MALLOC&#x3D;libc</p>
+</blockquote>
+<p> 这是啥？为啥要这么做？网上没找到答案 问了大佬才知道MALLOC&#x3D;libc是 </p>
+<ul>
+<li>编译并指定动态内存分配功能使用libc提供的</li>
+</ul>
+<p> 原来是内存分配的啊 为啥redis要用这个功能呢 来看看redis的原理：</p>
+<blockquote>
+<p>Redis本质上是一个Key-Value类型的内存数据库，很像memcached，整个数据库统统加载在内存当中进行操作，定期通过异步操作把数据库数据flush到硬盘上进行保存。因为是纯内存操作，Redis的性能非常出色，每秒可以处理超过 10万次读写操作，是已知性能最快的Key-Value DB。<br>Redis的出色之处不仅仅是性能，Redis最大的魅力是支持保存多种数据结构，此外单个value的最大限制是1GB，不像 memcached只能保存1MB的数据，因此Redis可以用来实现很多有用的功能，比方说用他的List来做FIFO双向链表，实现一个轻量级的高性 能消息队列服务，用他的Set可以做高性能的tag系统等等。另外Redis也可以对存入的Key-Value设置expire时间，因此也可以被当作一 个功能加强版的memcached来用。<br>Redis的主要缺点是数据库容量受到物理内存的限制，不能用作海量数据的高性能读写，因此Redis适合的场景主要局限在较小数据量的高性能操作和运算上</p>
+</blockquote>
+<p>恩恩额 原来redis经常和内存打交道啊 再来看看jemalloc干嘛用的：</p>
+<blockquote>
+<p>jemalloc是一个通用的malloc（3）实现，它强调了<br>碎片避免和可扩展的并发支持。jemalloc<br>于2005年首次作为FreeBSD libc分配器使用，从那以后它已经<br>进入许多依赖于其可预测行为的应用程序。2010年，<br>jemalloc开发工作范围扩大到包括开发人员支持功能<br>，如堆分析和广泛的监控&#x2F;调优钩子。现代jemalloc<br>版本继续被集成到FreeBSD中，因此多功能性<br>仍然至关重要。正在进行的开发工作趋势是将jemalloc<br>作为广泛的苛刻应用的最佳分配器之一，并且<br>消除&#x2F;减轻对现实<br>世界应用产生实际影响的弱点。</p>
+</blockquote>
+<p>个人理解的是</p>
+<blockquote>
+<p>redis主要是在内存上操作 而在内存上操作就不可避免的会产生内存碎片  为了优化内存碎片才选择的是jemalloc</p>
+</blockquote>
+<p>好 安装jemalloc</p>
+<h4 id="安装jemalloc"><a href="#安装jemalloc" class="headerlink" title="安装jemalloc"></a>安装jemalloc</h4><blockquote>
+<p>#下载 <br><br> wget <a target="_blank" rel="noopener" href="https://github.com/jemalloc/jemalloc/releases/download/4.2.1/jemalloc-4.2.1.tar.bz2">https://github.com/jemalloc/jemalloc/releases/download/4.2.1/jemalloc-4.2.1.tar.bz2</a>  <br><br>#解压 <br><br>tar -xjvf jemalloc-4.2.1.tar.bz2 <br><br>#在jemalloc-4.2.1目录下预编译<br><br>.&#x2F;configure –prefix&#x3D;&#x2F;usr&#x2F;local&#x2F;jemalloc<br><br>#编译<br><br>make -j8 &amp;&amp; make install</p>
+</blockquote>
+<p>完成 但是不晓得为啥运行还是有那个错误 我是linux小白。。。</p>
+<hr>
+<h4 id="直接安装jemalloc依赖"><a href="#直接安装jemalloc依赖" class="headerlink" title="直接安装jemalloc依赖"></a>直接安装jemalloc依赖</h4><p>github上的issues早就告诉了我们答案</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/antirez/redis/issues/722">https://github.com/antirez/redis/issues/722</a></li>
+</ul>
+<p>在redis目录下进入 </p>
+<blockquote>
+<p>cd deps</p>
+</blockquote>
+<p>安装jemalloc依赖</p>
+<blockquote>
+<p>make hiredis lua jemalloc linenoise</p>
+</blockquote>
+<blockquote>
+<p>cd ..&#x2F;</p>
+</blockquote>
+<p>重新编译</p>
+<blockquote>
+<p>make</p>
+</blockquote>
+<p>成功</p>
+<h3 id="启动redis"><a href="#启动redis" class="headerlink" title="启动redis"></a>启动redis</h3><blockquote>
+<p>src&#x2F;redis-server</p>
+</blockquote>
+<p>加载配置 配置文件在刚刚安装redis文件夹下 </p>
+<blockquote>
+<p>src&#x2F;redis-server .&#x2F;redis.conf </p>
+</blockquote>
+<p>停止redis</p>
+<blockquote>
+<p>src&#x2F;redis-cli shutdown</p>
+</blockquote>
+<p>启动redis客户端</p>
+<blockquote>
+<p>src&#x2F;redis-cli</p>
+</blockquote>
+<p>如果被卡住了就使用kill直接杀死</p>
+<blockquote>
+<p>kill -9 进程号</p>
+</blockquote>
+<p>使用下面这个命令查找进程号</p>
+<blockquote>
+<p>ps -ef|grep redis</p>
+</blockquote>
+<h3 id="配置redis"><a href="#配置redis" class="headerlink" title="配置redis"></a>配置redis</h3><ul>
+<li><p>第一步：进入redis目录</p>
+<blockquote>
+<p>cd redis-4.0.10&#x2F;</p>
+</blockquote>
+</li>
+<li><p>第二部：打开配置文件</p>
+<blockquote>
+<p>vim redis.conf</p>
+</blockquote>
+</li>
+<li><p>第三部：注释掉环内地址</p>
+<blockquote>
+<p>#bind 127.0.0.1</p>
+</blockquote>
+</li>
+<li><p>第四部：配置密码</p>
+<blockquote>
+<p>requirepass “123456”</p>
+</blockquote>
+</li>
+<li><p>第五步：保存退出</p>
+<blockquote>
+<p>wq</p>
+</blockquote>
+</li>
+<li><p>第六步：重启redis</p>
+<blockquote>
+<p>ps -ef|grep redis(查找进程号)<br><br>kill -9 xxxx(进程号)<br><br>src&#x2F;redis-server .&#x2F;redis.conf(使用配置启动)</p>
+</blockquote>
+</li>
+</ul>
+<p>OVER</p>
+<h3 id="测试连接redis（springboot）"><a href="#测试连接redis（springboot）" class="headerlink" title="测试连接redis（springboot）"></a>测试连接redis（springboot）</h3><p>配置信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># REDIS (RedisProperties)</span><br><span class="line"># Redis数据库索引（默认为0）</span><br><span class="line">spring.redis.database=0</span><br><span class="line"># Redis服务器地址</span><br><span class="line">spring.redis.host=localhost</span><br><span class="line"># Redis服务器连接端口</span><br><span class="line">spring.redis.port=6379</span><br><span class="line"># Redis服务器连接密码（默认为空）</span><br><span class="line">spring.redis.password=</span><br><span class="line"># 连接池最大连接数（使用负值表示没有限制）</span><br><span class="line">spring.redis.pool.max-active=8</span><br><span class="line"># 连接池最大阻塞等待时间（使用负值表示没有限制）</span><br><span class="line">spring.redis.pool.max-wait=-1</span><br><span class="line"># 连接池中的最大空闲连接</span><br><span class="line">spring.redis.pool.max-idle=8</span><br><span class="line"># 连接池中的最小空闲连接</span><br><span class="line">spring.redis.pool.min-idle=0</span><br><span class="line"># 连接超时时间（毫秒）</span><br><span class="line">spring.redis.timeout=0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>编写测试类</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@RunWith(SpringRunner.class)</span><br><span class="line">@SpringBootTest</span><br><span class="line">public class RedisApplicationTests &#123;</span><br><span class="line"></span><br><span class="line">	@Autowired</span><br><span class="line">	private StringRedisTemplate stringRedisTemplate;</span><br><span class="line"></span><br><span class="line">	@Test</span><br><span class="line">	public void contextLoads() &#123;</span><br><span class="line">		stringRedisTemplate.opsForValue().set(&quot;a&quot;,&quot;\n---------哈哈哈哈哈&quot;);</span><br><span class="line">		System.out.print(stringRedisTemplate.opsForValue().get(&quot;a&quot;));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">roMummy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://romummy.github.io/2018/07/13/CentOS上安装redis/">http://romummy.github.io/2018/07/13/CentOS上安装redis/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://romummy.github.io">roMummy</a>！</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Redis/">Redis</a></div><div class="social-share pull-right"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script><nav id="pagination"><div class="prev-post pull-left"><a href="/2019/04/09/APP%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96/"><i class="fa fa-chevron-left">  </i><span>APP启动优化</span></a></div><div class="next-post pull-right"><a href="/2018/07/12/%E8%BF%9E%E6%8E%A5mysql/"><span>连接mysql</span><i class="fa fa-chevron-right"></i></a></div></nav><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: '24af658de34aaa18ccee',
+  clientSecret: '91cd56ec2ab784fc8436eec4ee72d7a7dde9e158',
+  repo: 'romummy.github.io',
+  owner: 'roMummy',
+  admin: 'roMummy',
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-CN'
+})
+gitalk.render('gitalk-container')</script></div></div><footer class="footer-bg" style="background-image: url(/img/top.jpg)"><div class="layout" id="footer"><div class="copyright">&copy;2013 - 2022 By roMummy</div><div class="framework-info"><span>驱动 - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.1"></script><script src="/js/fancybox.js?version=1.9.1"></script><script src="/js/sidebar.js?version=1.9.1"></script><script src="/js/copy.js?version=1.9.1"></script><script src="/js/fireworks.js?version=1.9.1"></script><script src="/js/transition.js?version=1.9.1"></script><script src="/js/scroll.js?version=1.9.1"></script><script src="/js/head.js?version=1.9.1"></script><script src="/js/search/local-search.js"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章"></div></div></div><hr><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div></body></html>

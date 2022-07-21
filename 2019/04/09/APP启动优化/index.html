@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta name="description" content="APP启动优化"><meta name="keywords" content="学习"><meta name="author" content="roMummy"><meta name="copyright" content="roMummy"><title>APP启动优化 | roMummy</title><link rel="shortcut icon" href="/favicon.ico"><link rel="stylesheet" href="/css/index.css?version=1.9.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css?version=1.9.1"><meta name="format-detection" content="telephone=no"><meta http-equiv="x-dns-prefetch-control" content="on"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@latest/dist/gitalk.min.js"></script><script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.10.0/js/md5.min.js"></script><script>var GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容:${query}"}},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  hexoVersion: '5.4.2'
+} </script><meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="roMummy" type="application/atom+xml">
+</head><body><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true"></i><div id="sidebar" data-display="true"><div class="toggle-sidebar-info text-center"><span data-toggle="切换文章详情">切换站点概览</span><hr></div><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar"></div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#APP%E5%90%AF%E5%8A%A8"><span class="toc-number">1.</span> <span class="toc-text">APP启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%B7%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96"><span class="toc-number">2.</span> <span class="toc-text">冷启动优化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#main-%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E5%89%8D"><span class="toc-number">2.1.</span> <span class="toc-text">main()函数执行前</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#mian-%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C"><span class="toc-number">2.2.</span> <span class="toc-text">mian()函数执行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#mian-%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E5%90%8E"><span class="toc-number">2.3.</span> <span class="toc-text">mian()函数执行后</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A6%96%E5%B1%8F%E6%B8%B2%E6%9F%93%E5%AE%8C%E6%88%90%E5%90%8E"><span class="toc-number">2.4.</span> <span class="toc-text">首屏渲染完成后</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E7%BA%A7%E5%88%AB%E7%9A%84%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96"><span class="toc-number">2.5.</span> <span class="toc-text">功能级别的启动优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E7%BA%A7%E5%88%AB%E7%9A%84%E5%90%AF%E5%8A%A8%E4%BC%98%E5%8C%96"><span class="toc-number">2.6.</span> <span class="toc-text">方法级别的启动优化</span></a></li></ol></li></ol></div></div><div class="author-info hide"><div class="author-info__avatar text-center"><img src="https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&amp;quality=100&amp;size=b4000_4000&amp;sec=1530072864&amp;di=b83735a6b8cfd2147078a2bbf06d7570&amp;src=http://ww2.sinaimg.cn/wap720/63a4b031jw1f4lxxamw0jj218g0qodib.jpg"></div><div class="author-info__name text-center">roMummy</div><div class="author-info__description text-center"></div><div class="follow-button"><a target="_blank" rel="noopener" href="https://github.com/roMummy">github</a></div><hr><div class="author-info-articles"><a class="author-info-articles__archives article-meta" href="/archives"><span class="pull-left">文章</span><span class="pull-right">5</span></a><a class="author-info-articles__tags article-meta" href="/tags"><span class="pull-left">标签</span><span class="pull-right">3</span></a><a class="author-info-articles__categories article-meta" href="/categories"><span class="pull-left">分类</span><span class="pull-right">4</span></a></div><hr><div class="author-info-links"><div class="author-info-links__title text-center">Links</div><a class="author-info-links__name text-center" target="_blank" rel="noopener" href="https://github.com/roMummy">me</a></div></div></div><div id="content-outer"><div id="top-container" style="background-image: url(/img/top.jpg)"><div id="page-header"><span class="pull-left"> <a id="site-name" href="/">roMummy</a></span><i class="fa fa-bars toggle-menu pull-right" aria-hidden="true"></i><span class="pull-right menus">   <a class="site-page" href="/">首页</a><a class="site-page" href="/archives">档案</a><a class="site-page" href="/tags">标签</a><a class="site-page" href="/categories">类别</a></span><span class="pull-right"><a class="site-page social-icon search"><i class="fa fa-search"></i><span> 搜索</span></a></span></div><div id="post-info"><div id="post-title">APP启动优化</div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-04-09</time><span class="post-meta__separator">|</span><i class="fa fa-inbox post-meta__icon" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/iOS/">iOS</a><div class="post-meta-wordcount"><span>字数总计: </span><span class="word-count">741</span><span class="post-meta__separator">|</span><span>阅读时长: 2 分钟</span></div></div></div></div><div class="layout" id="content-inner"><article id="post"><div class="article-container" id="post-content"><h3 id="APP启动"><a href="#APP启动" class="headerlink" title="APP启动"></a>APP启动</h3><blockquote>
+<p>冷启动：App 点击启动前，它的进程不在系统里，需要系统新创建一个进程，需要系统新创建一个进程分配给他。一次完整的启动过程；</p>
+<p>热启动：app在后台，进程还在系统中。</p>
+</blockquote>
+<hr>
+<h3 id="冷启动优化"><a href="#冷启动优化" class="headerlink" title="冷启动优化"></a>冷启动优化</h3><p>app启动3阶段：</p>
+<blockquote>
+<ol>
+<li>main()函数执行前；</li>
+<li>main()函数执行后；</li>
+<li>首屏渲染完成后。</li>
+</ol>
+</blockquote>
+<h4 id="main-函数执行前"><a href="#main-函数执行前" class="headerlink" title="main()函数执行前"></a>main()函数执行前</h4><p>系统操作：</p>
+<ul>
+<li><p>加载可执行文件（.0文件），动态连接器首先会检查共享缓存看看是否存在，如果存在，就直接从共享缓存中拿出来使用。每一个进程都把这个共享缓存映射到自己的地址空间中。</p>
+</li>
+<li><p>加载动态链接库，进行rebase指针调整和bind符号绑定</p>
+<blockquote>
+<p>动态度的加载过程：</p>
+<p>①分析所依赖的动态库<br>②找到动态库的mach-o文件<br>③打开文件<br>④验证文件<br>⑤在系统核心注册文件签名<br>⑥对动态库的每一个segment调用mmap()</p>
+</blockquote>
+</li>
+<li><p>Objc运行时初始处理（相关类注册、category注册、selector唯一性检查）</p>
+</li>
+<li><p>初始化，执行+load()方法、attribute修饰的函数的调用、创建c++静态全局变量</p>
+</li>
+</ul>
+<p>优化：</p>
+<ul>
+<li>减少动态库加载，尽量将多个动态库合并</li>
+<li>减少加载启动后不会去使用的类或者方法</li>
+<li>减少使用+load()方法，使用+initialize()方法替换。在一个 +load() 方法里，进行运行时方法替换操作会带来4毫秒的消耗</li>
+<li>控制c++全局变量的数量</li>
+</ul>
+<blockquote>
+<p>通过在工程的scheme中添加环境变量<code>DYLD_PRINT_STATISTICS</code>，设置值为1，App启动加载时Xcode的控制台就会有pre-main各个阶段的详细耗时输出。但是<code>DYLD_PRINT_STATISTICS</code>变量打印时间是iOS10以后才支持的功能，所以需要用iOS10系统及以上的机器来做测试。</p>
+</blockquote>
+<h4 id="mian-函数执行"><a href="#mian-函数执行" class="headerlink" title="mian()函数执行"></a>mian()函数执行</h4><p><img src="http://www.zoomfeng.com/images/2018/07/5.png" alt="img"></p>
+<h4 id="mian-函数执行后"><a href="#mian-函数执行后" class="headerlink" title="mian()函数执行后"></a>mian()函数执行后</h4><p>mian()函数执行–&gt;didFinishLaunchingWithOptions 方法里首屏渲染相关方法执行完成</p>
+<p>执行：</p>
+<blockquote>
+<ul>
+<li>首屏初始化所需配置文件的读写操作</li>
+<li>首屏数据读取</li>
+<li>首屏渲染的大量计算</li>
+</ul>
+</blockquote>
+<p>优化：</p>
+<blockquote>
+<p>didFinishLaunchingWithOptions方法里面制作必要的操作。其它的操作放到对应的功能去初始化</p>
+</blockquote>
+<h4 id="首屏渲染完成后"><a href="#首屏渲染完成后" class="headerlink" title="首屏渲染完成后"></a>首屏渲染完成后</h4><p>首屏渲染完成–&gt;didFinishLaunchingWithOptions方法结束</p>
+<p>执行：</p>
+<blockquote>
+<p>非首屏其它业务模块的初始化、监听的注册、配置文件的读取等</p>
+</blockquote>
+<h4 id="功能级别的启动优化"><a href="#功能级别的启动优化" class="headerlink" title="功能级别的启动优化"></a>功能级别的启动优化</h4><p><img src="https://static001.geekbang.org/resource/image/f3/19/f30f438d447e81132dd520e657427419.png" alt="img"></p>
+<h4 id="方法级别的启动优化"><a href="#方法级别的启动优化" class="headerlink" title="方法级别的启动优化"></a>方法级别的启动优化</h4><p>objc_msgSend ：在运行时根据对象和方法的selector去找到对应的函数指针，然后执行。能够控制所有的oc方法。</p>
+<p><a target="_blank" rel="noopener" href="https://opensource.apple.com/source/objc4/objc4-723/runtime/Messengers.subproj/">源码</a></p>
+<blockquote>
+<p>objc_msgSend逻辑：先获取对象对应类的信息，再获取方法的缓存，根据方法的selector查找函数指针，经过异常错误处理后，最后跳到对应函数的实现。</p>
+</blockquote>
+<p>资料：</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/article/85331?code=0eTznNzpAbVisw%252525252FesJ9iM32u2ctcY8OqwgMuqSlv5OE%252525253D">来源</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.zoomfeng.com/blog/launch-time.html">iOS启动时间优化</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2018/01/assembly-language-primer.html">汇编</a></p>
+</blockquote>
+</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">roMummy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://romummy.github.io/2019/04/09/APP启动优化/">http://romummy.github.io/2019/04/09/APP启动优化/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://romummy.github.io">roMummy</a>！</span></div></div><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%AD%A6%E4%B9%A0/">学习</a></div><div class="social-share pull-right"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script><nav id="pagination"><div class="prev-post pull-left"><a href="/2022/07/20/iOS%20PDF%E6%B7%BB%E5%8A%A0%E6%B0%B4%E5%8D%B0/"><i class="fa fa-chevron-left">  </i><span>iOS PDF添加水印</span></a></div><div class="next-post pull-right"><a href="/2018/07/13/CentOS%E4%B8%8A%E5%AE%89%E8%A3%85redis/"><span>CentOS上安装redis</span><i class="fa fa-chevron-right"></i></a></div></nav><div id="gitalk-container"></div><script>var gitalk = new Gitalk({
+  clientID: '24af658de34aaa18ccee',
+  clientSecret: '91cd56ec2ab784fc8436eec4ee72d7a7dde9e158',
+  repo: 'romummy.github.io',
+  owner: 'roMummy',
+  admin: 'roMummy',
+  id: md5(decodeURI(location.pathname)),
+  language: 'zh-CN'
+})
+gitalk.render('gitalk-container')</script></div></div><footer class="footer-bg" style="background-image: url(/img/top.jpg)"><div class="layout" id="footer"><div class="copyright">&copy;2013 - 2022 By roMummy</div><div class="framework-info"><span>驱动 - </span><a target="_blank" rel="noopener" href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 - </span><a target="_blank" rel="noopener" href="https://github.com/Molunerfinn/hexo-theme-melody"><span>Melody</span></a></div><div class="busuanzi"><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_page_pv"><i class="fa fa-file-o"></i><span id="busuanzi_value_page_pv"></span><span></span></span></div></div></footer><i class="fa fa-arrow-up" id="go-up" aria-hidden="true"></i><script src="/js/third-party/anime.min.js"></script><script src="/js/third-party/jquery.min.js"></script><script src="/js/third-party/jquery.fancybox.min.js"></script><script src="/js/third-party/velocity.min.js"></script><script src="/js/third-party/velocity.ui.min.js"></script><script src="/js/utils.js?version=1.9.1"></script><script src="/js/fancybox.js?version=1.9.1"></script><script src="/js/sidebar.js?version=1.9.1"></script><script src="/js/copy.js?version=1.9.1"></script><script src="/js/fireworks.js?version=1.9.1"></script><script src="/js/transition.js?version=1.9.1"></script><script src="/js/scroll.js?version=1.9.1"></script><script src="/js/head.js?version=1.9.1"></script><script src="/js/search/local-search.js"></script><script>if(/Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent)) {
+  $('#nav').addClass('is-mobile')
+  $('footer').addClass('is-mobile')
+  $('#top-container').addClass('is-mobile')
+}</script><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章"></div></div></div><hr><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+ <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div></body></html>
